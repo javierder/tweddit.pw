@@ -1,0 +1,369 @@
+<!doctype html>
+<html>
+  
+  <head>
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66771-24', 'tweddit.pw');
+  ga('send', 'pageview');
+
+</script>
+    <title>Tweddit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<!-- <link href="http://netdna.bootstrapcdn.com/bootswatch/3.0.3/flatly/bootstrap.min.css" rel="stylesheet"> -->
+<!-- Latest compiled and minified JavaScript -->
+
+
+
+
+    <script>
+    function doRefresh () {
+            $("#id_dorefresh").attr("disabled",true);
+              intervalcount = const_wait;
+
+              loadPosts(false);
+
+    }
+    $(document).ready(function(){
+
+    	loadReddits();
+    	current_reddit = "/";
+    	loadPosts(true);
+
+
+
+    });
+
+
+    function loadReddits(){
+	$.getJSON(
+        "http://www.reddit.com/reddits/.json?limit=100&jsonp=?",
+        function foo(data)
+        {
+        $("#id_subreddits").html("");
+
+        $("#id_subreddits").append('            <li id="homehome" class="active"><a href="#" onclick="setReddit(this); return false;">Home</a> </li><li id="allall"><a href="#"  onclick="setReddit(this); return false;">All</a> </li>')
+          $.each(
+            data.data.children,
+            function (i, redd) {
+
+            	$("#id_subreddits").append("<li id='"+redd.data.id+"'><a href='#' onclick='setReddit(this);return false;'>"+redd.data.url+"</a></li>");
+
+            });
+       }
+    );
+	}
+    var const_wait = 30;
+
+    // var const_changecolor = 10;
+    var current_reddit = '';
+
+    var intervalcount = const_wait;
+    var callinterval;
+
+
+    function doShowMore() {
+
+
+
+    	
+    	$(".still-hidden").css("opacity","0").css("background-color","#f0f8ff").show().animate({opacity:100,backgroundColor:"transparent !important"},1500).removeClass("still-hidden");
+    	$("#id_wehavemore").remove();
+      	document.title = "Tweddit " + current_reddit;// + " ("+(prev_count + new_count)+")";
+
+    }
+
+    function loadPosts(isfirst){
+    	var new_count=0;
+    	var is_first;
+    	if(isfirst==undefined || !isfirst ) 
+    		is_first = false;
+    	else
+        is_first = true
+
+
+
+    	var has_new = false;
+    	window.clearInterval(callinterval);
+    	intervalcount = const_wait;
+    	$("#id_status").text("Loading reddit.com" + current_reddit + "...");
+      
+        $.getJSON(
+          "http://www.reddit.com"+current_reddit+".json?limit=30&jsonp=?",
+          function (data)
+          {
+            $.each(
+              data.data.children.reverse(),
+              function (i, post) {
+
+              	if($("#"+post.data.id).length == 0)
+              	{
+  	            	new_count+=1;
+  	            	if(is_first )
+  		            	var new_well = $("<div class='alert '>");
+  		            else
+  		            	var new_well = $("<div class='alert  still-hidden'>");
+
+  	            	new_well.attr("id",post.data.id)
+
+  	            	var link = $("<a>").text(post.data.title);
+  	            	link.attr("href",post.data.url)
+  	            	link.attr("target","_blank");
+
+                  inside_newell = $("<div class='link_data'></div>");
+
+  	            	new_well.append('<span class="label label-primary ">'+post.data.score+'</span>&nbsp;');
+
+  	            	new_well.append(link);
+
+                  new_well.append('<span class="link_data" > ('+post.data.domain+')</span>');
+
+  	            	// inside_newell.append("<br/>");
+                  inside_newell.append('<span  ><a target="_blank"  href="http://reddit.com/'+post.data.permalink+'">'+post.data.num_comments+' comments</a></span>');
+
+                  inside_newell.append("&nbsp;&nbsp;&nbsp;");
+
+                  inside_newell.append('<span>in <b>/r/'+post.data.subreddit+'</b></span>');
+
+                  inside_newell.append("&nbsp;&nbsp;&nbsp;");
+
+
+                  inside_newell.append('<span >by <a  target="_blank" href="http://reddit.com/u/'+post.data.author+'">/u/'+post.data.author+'</a></span>');
+
+  	              new_well.append(inside_newell);
+  	            	$("#id_posts").prepend(new_well);
+
+  	            	has_new = true;
+              	}
+
+
+              }
+            );
+            if(has_new){
+
+            	if(!is_first) {
+  	          	if($("#id_wehavemore").length == 0) {
+  	          		var wehavemore = $("<div></div>").attr("id","id_wehavemore");
+  	          		var thelink = $("<a onclick='doShowMore();return false;' class=' alert alert-warning ' style='display:block;padding-top: 5px;' href='#'>You have new posts: </a>")
+  	          		
+  	          		var morecont = $("<span id='id_morecont'></span>").text(new_count);
+  	          		thelink.append(morecont)
+  	          		wehavemore.append(thelink);
+  	          		$("#id_posts").prepend(wehavemore)
+  			          	document.title = "Tweddit " + current_reddit; 
+
+
+  	          	}
+  	          	else {
+  	          		prev_count = parseInt($("#id_morecont").text());
+
+  	          		$("#id_morecont").text(prev_count + new_count);
+  			          	document.title = "("+(prev_count + new_count)+") Tweddit " + current_reddit ;
+
+  	          	}
+            	}
+            	else
+  			          	document.title = "Tweddit " + current_reddit; 
+
+            }
+            $("#id_dorefresh").removeAttr("disabled");
+
+          }
+        ).fail(function  () {
+          alert("Error loading subreddit. Recheck the name!");
+        })
+
+
+      callinterval=setInterval(function(){countInterval()},1000);
+    
+    }
+
+
+    function takeOutColors() {
+    	$(".alert-warning").removeClass("alert-warning");
+    }
+
+    function setReddit(reddit){
+    	$("#id_subreddits").find("li").removeClass("active")
+    	$(reddit).parent().addClass("active");
+    	$("#id_posts").html("");
+
+    	var name = $(reddit).text();
+    	if(name == "Home")
+    		name = "/"
+    	else if(name == "All")
+    		name = "/r/all"
+      if(name.indexOf("__") != -1) {
+        name = name.replace("__","+");
+      }
+      if(name.indexOf("---") != -1) {
+        name = name.replace("---","/");
+      }
+      
+
+
+    	current_reddit = name;
+    	loadPosts(true);
+
+    }
+
+    function countInterval(){
+    	intervalcount=intervalcount-1;
+
+    	if(intervalcount < 1)
+    	{	
+  
+    		intervalcount = const_wait;
+    		loadPosts(false)
+    	}
+    }
+
+    </script>
+    <style type="text/css">
+
+ 	a.comments, a.authors
+    	{
+    		color:white !important;
+    	}
+
+    	#id_posts .alert a {
+    		color: blue;
+    	}
+    	#id_posts .alert {
+	    	padding-top: 0px;
+	padding-bottom: 5px;
+	margin-bottom: 0px;
+	border-bottom: dotted 1px #ccc;
+	margin-top: 5px;
+    	}
+    	#id_posts .alert a:visited {
+    		color:#551a8b;
+    	}
+    	.still-hidden {
+    		display: none;
+    	}
+
+
+      .link_data, .link_data a {
+        font-size: 12px;
+
+
+      }
+      .link_data  {
+                color:#888 !important;
+        margin-top: 3px;
+
+      }
+   
+
+    </style>
+  </head>
+  
+  <body>
+    <div class="container container-fluid">
+    <div class="row">
+    <div class="col-md-2">
+          <h1 >Tweddit</h1>
+    </div>
+   
+      
+    <div class="col-md-9">   <div class="well ">First we load the top 30 results from the selected subreddit, and then we add -at the top- every new 
+      item that appears in the top 30 since then, updating every 30 secs. Just leave this open and the tab title will let you know when you have new posts!
+      </div>
+    </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+          <ul class="nav  nav-pills nav-stacked" id="id_subreddits">
+          	<li>Loading subreddits...</li>
+          </ul>
+        </div>
+        <div class="col-md-8">
+          <!-- <div class="container-fluid alert alert-info" style="height: 27px;
+padding-top: 4px;">
+            <div ><span id="id_status">Loading...</span> <button id="id_dorefresh" style="margin-top:-5px" type="button" class="btn btn-info btn-xs">  <span class="glyphicon glyphicon-refresh"></span>
+</button></div>
+          </div> -->
+
+<div class="input-group double-input pull-left" style="width:85%">
+    <input type="text" placeholder="Type a subreddit or meta-subreddit name (name only 'wtf','funny/new', 'etc')" id="id_newreddit" class="form-control" />
+    <span class="input-group-btn">
+        <button class="btn btn-default" type="button" onclick="loadCustom();">Go!</button>
+    </span>
+</div><!-- /input-group -->
+<script>
+function addNewLiReddit(subreddit) {
+    if(subreddit.indexOf("+") != -1) {
+        subreddit_str = subreddit.replace("+","__");
+      }
+      else if(subreddit.indexOf("/") != -1) {
+        subreddit_str = subreddit.replace("/","---");
+      }
+      else
+        subreddit_str = subreddit;
+
+    if($("#id_custom_"+subreddit_str).length == 0) {
+
+     
+
+      obj = $("#id_subreddits").prepend("<li id='id_custom_"+subreddit_str+"'><a href='#' onclick='setReddit(this);return false;'>/r/"+subreddit+"</a></li>");
+    }
+
+    return $("#id_custom_"+subreddit_str).find("a");
+
+}  
+  function loadCustom () {
+    val = $("#id_newreddit").val();
+
+
+    obj = addNewLiReddit(val);
+    setReddit(obj);
+    $("#id_newreddit").val("");
+
+  }
+</script>
+
+                                         
+
+                <div class="btn-toolbar pull-right" role="toolbar">
+
+        <div class="btn-group">
+
+          <button id="id_dorefresh" type="button" class="btn btn-default" onclick="doRefresh();"><span class="glyphicon glyphicon-refresh"></span></button>
+
+          <button type="button" class="btn btn-default" onclick="alert('Not yet!');"><span class="glyphicon glyphicon-cog"></span></button>
+        </div>
+      </div>
+
+      <div style="clear:both"></div>
+          <div class="container-fluid" id="id_posts">
+
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>&copy; <a href="http://tribalo.net">Tribalo.net</a> 2014</p>
+      </footer>
+    </div>
+
+
+
+    <!-- // <script src="bootstrap/js/bootstrap.min.js"></script> -->
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+  </body>
+
+</html>
