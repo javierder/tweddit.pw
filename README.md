@@ -6,5 +6,7 @@ If you open the main page you'll get a list of the latest Reddit posts, and if y
 
 Similar to having twitter open and getting the notices about new tweets available for you.
 
+You can see this live in tweddit.pk
+
 -----------------
 Javyer DerDerian
