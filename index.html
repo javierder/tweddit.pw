@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html>
   
@@ -38,9 +39,9 @@
     }
     $(document).ready(function(){
 
-    	loadReddits();
-    	current_reddit = "/";
-    	loadPosts(true);
+      loadReddits();
+      current_reddit = "/";
+      loadPosts(true);
 
 
 
@@ -48,7 +49,7 @@
 
 
     function loadReddits(){
-	$.getJSON(
+  $.getJSON(
         "http://www.reddit.com/reddits/.json?limit=100&jsonp=?",
         function foo(data)
         {
@@ -59,12 +60,12 @@
             data.data.children,
             function (i, redd) {
 
-            	$("#id_subreddits").append("<li id='"+redd.data.id+"'><a href='#' onclick='setReddit(this);return false;'>"+redd.data.url+"</a></li>");
+              $("#id_subreddits").append("<li id='"+redd.data.id+"'><a href='#' onclick='setReddit(this);return false;'>"+redd.data.url+"</a></li>");
 
             });
        }
     );
-	}
+  }
     var const_wait = 30;
 
     // var const_changecolor = 10;
@@ -78,27 +79,27 @@
 
 
 
-    	
-    	$(".still-hidden").css("opacity","0").css("background-color","#f0f8ff").show().animate({opacity:100,backgroundColor:"transparent !important"},1500).removeClass("still-hidden");
-    	$("#id_wehavemore").remove();
-      	document.title = "Tweddit " + current_reddit;// + " ("+(prev_count + new_count)+")";
+      
+      $(".still-hidden").css("opacity","0").css("background-color","#f0f8ff").show().animate({opacity:100,backgroundColor:"transparent !important"},1500).removeClass("still-hidden");
+      $("#id_wehavemore").remove();
+        document.title = "Tweddit " + current_reddit;// + " ("+(prev_count + new_count)+")";
 
     }
 
     function loadPosts(isfirst){
-    	var new_count=0;
-    	var is_first;
-    	if(isfirst==undefined || !isfirst ) 
-    		is_first = false;
-    	else
+      var new_count=0;
+      var is_first;
+      if(isfirst==undefined || !isfirst ) 
+        is_first = false;
+      else
         is_first = true
 
 
 
-    	var has_new = false;
-    	window.clearInterval(callinterval);
-    	intervalcount = const_wait;
-    	$("#id_status").text("Loading reddit.com" + current_reddit + "...");
+      var has_new = false;
+      window.clearInterval(callinterval);
+      intervalcount = const_wait;
+      $("#id_status").text("Loading reddit.com" + current_reddit + "...");
       
         $.getJSON(
           "http://www.reddit.com"+current_reddit+".json?limit=30&jsonp=?",
@@ -108,29 +109,29 @@
               data.data.children.reverse(),
               function (i, post) {
 
-              	if($("#"+post.data.id).length == 0)
-              	{
-  	            	new_count+=1;
-  	            	if(is_first )
-  		            	var new_well = $("<div class='alert '>");
-  		            else
-  		            	var new_well = $("<div class='alert  still-hidden'>");
+                if($("#"+post.data.id).length == 0)
+                {
+                  new_count+=1;
+                  if(is_first )
+                    var new_well = $("<div class='alert '>");
+                  else
+                    var new_well = $("<div class='alert  still-hidden'>");
 
-  	            	new_well.attr("id",post.data.id)
+                  new_well.attr("id",post.data.id)
 
-  	            	var link = $("<a>").text(post.data.title);
-  	            	link.attr("href",post.data.url)
-  	            	link.attr("target","_blank");
+                  var link = $("<a>").text(post.data.title);
+                  link.attr("href",post.data.url)
+                  link.attr("target","_blank");
 
                   inside_newell = $("<div class='link_data'></div>");
 
-  	            	new_well.append('<span class="label label-primary ">'+post.data.score+'</span>&nbsp;');
+                  new_well.append('<span class="label label-primary ">'+post.data.score+'</span>&nbsp;');
 
-  	            	new_well.append(link);
+                  new_well.append(link);
 
                   new_well.append('<span class="link_data" > ('+post.data.domain+')</span>');
 
-  	            	// inside_newell.append("<br/>");
+                  // inside_newell.append("<br/>");
                   inside_newell.append('<span  ><a target="_blank"  href="http://reddit.com/'+post.data.permalink+'">'+post.data.num_comments+' comments</a></span>');
 
                   inside_newell.append("&nbsp;&nbsp;&nbsp;");
@@ -142,40 +143,40 @@
 
                   inside_newell.append('<span >by <a  target="_blank" href="http://reddit.com/u/'+post.data.author+'">/u/'+post.data.author+'</a></span>');
 
-  	              new_well.append(inside_newell);
-  	            	$("#id_posts").prepend(new_well);
+                  new_well.append(inside_newell);
+                  $("#id_posts").prepend(new_well);
 
-  	            	has_new = true;
-              	}
+                  has_new = true;
+                }
 
 
               }
             );
             if(has_new){
 
-            	if(!is_first) {
-  	          	if($("#id_wehavemore").length == 0) {
-  	          		var wehavemore = $("<div></div>").attr("id","id_wehavemore");
-  	          		var thelink = $("<a onclick='doShowMore();return false;' class=' alert alert-warning ' style='display:block;padding-top: 5px;' href='#'>You have new posts: </a>")
-  	          		
-  	          		var morecont = $("<span id='id_morecont'></span>").text(new_count);
-  	          		thelink.append(morecont)
-  	          		wehavemore.append(thelink);
-  	          		$("#id_posts").prepend(wehavemore)
-  			          	document.title = "Tweddit " + current_reddit; 
+              if(!is_first) {
+                if($("#id_wehavemore").length == 0) {
+                  var wehavemore = $("<div></div>").attr("id","id_wehavemore");
+                  var thelink = $("<a onclick='doShowMore();return false;' class=' alert alert-warning ' style='display:block;padding-top: 5px;' href='#'>You have new posts: </a>")
+                  
+                  var morecont = $("<span id='id_morecont'></span>").text(new_count);
+                  thelink.append(morecont)
+                  wehavemore.append(thelink);
+                  $("#id_posts").prepend(wehavemore)
+                    document.title = "Tweddit " + current_reddit; 
 
 
-  	          	}
-  	          	else {
-  	          		prev_count = parseInt($("#id_morecont").text());
+                }
+                else {
+                  prev_count = parseInt($("#id_morecont").text());
 
-  	          		$("#id_morecont").text(prev_count + new_count);
-  			          	document.title = "("+(prev_count + new_count)+") Tweddit " + current_reddit ;
+                  $("#id_morecont").text(prev_count + new_count);
+                    document.title = "("+(prev_count + new_count)+") Tweddit " + current_reddit ;
 
-  	          	}
-            	}
-            	else
-  			          	document.title = "Tweddit " + current_reddit; 
+                }
+              }
+              else
+                    document.title = "Tweddit " + current_reddit; 
 
             }
             $("#id_dorefresh").removeAttr("disabled");
@@ -192,19 +193,19 @@
 
 
     function takeOutColors() {
-    	$(".alert-warning").removeClass("alert-warning");
+      $(".alert-warning").removeClass("alert-warning");
     }
 
     function setReddit(reddit){
-    	$("#id_subreddits").find("li").removeClass("active")
-    	$(reddit).parent().addClass("active");
-    	$("#id_posts").html("");
+      $("#id_subreddits").find("li").removeClass("active")
+      $(reddit).parent().addClass("active");
+      $("#id_posts").html("");
 
-    	var name = $(reddit).text();
-    	if(name == "Home")
-    		name = "/"
-    	else if(name == "All")
-    		name = "/r/all"
+      var name = $(reddit).text();
+      if(name == "Home")
+        name = "/"
+      else if(name == "All")
+        name = "/r/all"
       if(name.indexOf("__") != -1) {
         name = name.replace("__","+");
       }
@@ -214,46 +215,46 @@
       
 
 
-    	current_reddit = name;
-    	loadPosts(true);
+      current_reddit = name;
+      loadPosts(true);
 
     }
 
     function countInterval(){
-    	intervalcount=intervalcount-1;
+      intervalcount=intervalcount-1;
 
-    	if(intervalcount < 1)
-    	{	
+      if(intervalcount < 1)
+      { 
   
-    		intervalcount = const_wait;
-    		loadPosts(false)
-    	}
+        intervalcount = const_wait;
+        loadPosts(false)
+      }
     }
 
     </script>
     <style type="text/css">
 
- 	a.comments, a.authors
-    	{
-    		color:white !important;
-    	}
+  a.comments, a.authors
+      {
+        color:white !important;
+      }
 
-    	#id_posts .alert a {
-    		color: blue;
-    	}
-    	#id_posts .alert {
-	    	padding-top: 0px;
-	padding-bottom: 5px;
-	margin-bottom: 0px;
-	border-bottom: dotted 1px #ccc;
-	margin-top: 5px;
-    	}
-    	#id_posts .alert a:visited {
-    		color:#551a8b;
-    	}
-    	.still-hidden {
-    		display: none;
-    	}
+      #id_posts .alert a {
+        color: blue;
+      }
+      #id_posts .alert {
+        padding-top: 0px;
+  padding-bottom: 5px;
+  margin-bottom: 0px;
+  border-bottom: dotted 1px #ccc;
+  margin-top: 5px;
+      }
+      #id_posts .alert a:visited {
+        color:#551a8b;
+      }
+      .still-hidden {
+        display: none;
+      }
 
 
       .link_data, .link_data a {
@@ -287,7 +288,7 @@
     <div class="row">
         <div class="col-md-3">
           <ul class="nav  nav-pills nav-stacked" id="id_subreddits">
-          	<li>Loading subreddits...</li>
+            <li>Loading subreddits...</li>
           </ul>
         </div>
         <div class="col-md-8">
